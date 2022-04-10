@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+
+<html lang="pl">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Lights Out</title>
+	<style>
+	
+.header {
+color: orange;
+font-weight: bold;
+font-family: courier new;
+margin-left: 25px;
+
+}
+
+.grid-container {
+display: grid;
+padding: 5px;
+width: 510px;
+border: 2px solid #ffcc00;
+grid-template-columns: repeat(5,2fr);
+grid-template-rows: repeat(5,2fr);
+height: 510px;
+margin-left: 33px;
+}
+
+.grid-counters {
+display: grid;
+padding: 0px;
+width: 521px;
+border: 2px solid #ffcc00;
+grid-template-columns: repeat(3,2fr);
+grid-template-rows: repeat(2,2fr);
+height: 160px;
+margin-left: 33px;
+}
+
+.grid-item {
+  background-color: rgba(255, 255, 155, 0.8);
+  border: 1px solid rgba(0, 0, 55, 0.8);
+  padding: 39px 0;
+  font-size: 10px;
+  text-align: center;
+
+}
+
+.grid-item:hover {
+box-shadow: inset 0 0 1em gold, 0 0 1em orange;
+}
+
+.wzoryContainer {
+display: grid;
+border: 2px solid #ffcc00;
+width: 590px;
+height:205px;
+margin-top: 5px;
+grid-template-columns: repeat(3,1fr);
+grid-template-rows: repeat(1,2fr);
+
+}
+
+.wzory1 {
+display: grid;
+border: 5px solid green;
+grid-template-columns: repeat(3,2fr);
+grid-template-rows: repeat(3,2fr);
+padding: 20px;
+background-color: rgba(0, 255, 0, 0.8);
+
+}
+
+
+.wzory2 {
+display: grid;
+border: 3px solid #ffcc00;
+grid-template-columns: repeat(3,2fr);
+grid-template-rows: repeat(3,2fr);
+padding: 20px;
+background-color: Cornsilk;
+
+}
+
+.wzory3 {
+display: grid;
+border: 3px solid #ffcc00;
+grid-template-columns: repeat(3,2fr);
+grid-template-rows: repeat(3,2fr);
+padding: 20px;
+background-color: Cornsilk;
+}
+
+.wzory1:hover {
+box-shadow: inset 0 0 1em gold, 0 0 2em orange;
+}
+
+.wzory2:hover {
+box-shadow: inset 0 0 1em gold, 0 0 1em orange;
+}
+
+.wzory3:hover {
+box-shadow: inset 0 0 1em gold, 0 0 1em orange;
+}
+
+.white{
+
+width: 40px;
+height: 40px;
+
+padding: 0;
+margin-left: 5px;
+margin-right: 5px;
+}
+
+.orange{
+width: 40px;
+height: 40px;
+background:DarkOrange;
+
+padding: 0;
+margin-left: 5px;
+margin-right: 5px;
+}
+
+.przycisk {
+
+
+}
+
+.przycisk:hover {
+background-color: rgba(255, 255, 180, 0.8);
+}
+</style>
+
+<script type="text/javascript">
+var hints = [];
+
+function podpowiedzi()
+{
+
+var a,b,c;
+for(var i=0;i<hints.length-2;i++){
+a=hints[i];b=hints[i+1];c=hints[i+2];
+if(a==b&&b==c){hints.splice(i,3)}}
+
+console.log("tabela przed usunieciem i przed zazn.: ", hints);
+document.getElementById(hints[hints.length-1]).style.border="6px solid black";
+
+document.getElementById(hints[hints.length-1]).addEventListener("click", function()
+{
+console.log("tablica przed usunieciem TOP: ", hints);
+hints.slice(hints.length-1, 1);
+
+//TUTAJ ZMIENIA KOLOR TLA, A ZA CHWILE WSTAWWZÓR DODAJE DO TABELI TE SAMO POLE
+//document.getElementById(hints[hints.length-1]).style.border="1px solid rgba(0, 0, 55, 0.8)";
+}
+
+)
+
+console.log("tablica podpowiedzi (hints): ", hints);
+//console.log("ostatni element hintsów: ", hints[hints.length-1]);
+
+}
+</script>
+
+<script type="text/javascript">
+
+function losujPola(wzor)
+{
+
+var tab = [];
+for (var i = 0; i<3; i++)
+{
+tab.push(Math.floor(Math.random() * 25)+1);
+
+console.log("wylosowane pole: " + tab[i] + " i wzor: " + wzor);
+}
+for (var i = 0; i<tab.length; i++)
+{
+if (wzor == 1)shape1(tab[i]);
+if (wzor == 2)shape2(tab[i]);
+if (wzor == 3)shape3(tab[i]);
+}
+hints = tab;
+tab.sort();
+
+console.log("wylosowane pola: ", tab);
+
+for (var i = 0; i<3; i++)
+{
+hints[i+3]=tab[i];
+}
+hints.sort();
+console.log("tablica podpowiedzi: ", hints);
+
+
+}
+</script>
+	<script type="text/javascript">
+	
+	function zmienKolor ()
+	{
+	
+	var header = document.getElementById("headerUp");
+	var myColors = ['AliceBlue', 'Aqua', 'AntiqueWhite', 'Aquamarine', 'BlanchedAlmond', 'Bisque', 'BurlyWood', 'CadetBlue', 'CornflowerBlue', 'Cornsilk'];
+	const randomElement = myColors[Math.floor(Math.random() * myColors.length)];
+	
+	header.style.color = randomElement;
+	setTimeout("zmienKolor()", 3000);
+	}
+	
+
+	</script>
+	
+	<script type="text/javascript">
+	
+	//funkcja jako argument przyjmuje tablice (ta mieści ID pól) albo ID pola i koloruje odpowiednie pola
+	function colorFields(idPola) {
+	//console.log("colorFields wykonuje sie: ", idPola);
+	if(document.getElementById(idPola).style.backgroundColor == "rgba(255, 255, 155, 0.8)")
+	{
+	document.getElementById(idPola).style.backgroundColor = "red";
+	}
+	else if(document.getElementById(idPola).style.backgroundColor == "red")
+	{
+	document.getElementById(idPola).style.backgroundColor = "green";
+	}
+	else if(document.getElementById(idPola).style.backgroundColor == "green")
+	{
+	document.getElementById(idPola).style.backgroundColor = "rgba(255, 255, 155, 0.8)";
+	}
+	}
+	</script>
+	
+
+	
+	<script type="text/javascript">
+	function resetGame() {
+	console.log("resetgame wykonuje sie");
+	for (var i=1; i<26; i++)
+	{
+	document.getElementById(i).style.backgroundColor = "rgba(255, 255, 155, 0.8)";
+	}
+	document.getElementById("wzor"+whichShape()).style.backgroundColor = "Cornsilk";
+	document.getElementById("wzor"+whichShape()).style.border = "3px solid #ffcc00";
+	
+	}
+	</script>
+	
+	<script type="text/javascript">
+	function isFinish() {
+	var licznik = 0;
+	var licznikP = 0;
+	var licznikR = 0;
+	
+	for (var i=1; i<26; i++)
+	{
+	if(document.getElementById(i).style.backgroundColor == "green")
+	{
+	licznik++;
+	}
+	else if(document.getElementById(i).style.backgroundColor == "red")
+	{
+	licznikR++;
+	
+	}
+	else if(document.getElementById(i).style.backgroundColor == "rgba(255, 255, 155, 0.8)")
+	{
+	licznikP++;
+	
+	}
+	document.getElementById("licznik1").innerHTML = licznik;
+	document.getElementById("licznikR").innerHTML = licznikR;
+	document.getElementById("licznikP").innerHTML = licznikP;
+	}
+	
+	if (licznik <5)
+	{
+	document.getElementById("licznik2").innerHTML = "Mizernie :(";
+	}
+	else if (licznik >=5 & licznik <10 || licznikP >=5 & licznikP <10 || licznikR >=5 & licznikR <10 )
+	{
+	document.getElementById("licznik2").innerHTML = "Coraz lepiej";
+	}
+	
+	else if (licznik >= 10 & licznik <15 || licznikP >=10 & licznikP <15 || licznikR >=10 & licznikR <15)
+	{
+	document.getElementById("licznik2").innerHTML = "Dobrze!";
+	}
+	else if (licznik >= 15 & licznik <20 || licznikP >=15 & licznikP <20 || licznikR >=15 & licznikR <20)
+	{
+	document.getElementById("licznik2").innerHTML = "Wybornie!";
+	}
+	else if (licznik >= 20 & licznik <25 || licznikP >=20 & licznikP <25 || licznikR >=20 & licznikR <25)
+	{
+	document.getElementById("licznik2").innerHTML = "Blisko celu!";
+	}
+	
+	if (licznik == 25 || licznikP == 25 || licznikR == 25)
+	{
+	document.getElementById("licznik2").innerHTML = "BRAWO!!!";
+	//document.getElementById("przyciskB").removeEventListener("click", podpowiedzi(hints));
+	resetGame();
+	}
+	//jesli true, wyskakuje okienko "wygrales" i resetuje gre
+	//jesli false, nic nie robi(?)
+	}
+	
+	</script>
+	
+	<script type="text/javascript">
+	function whichShape ()
+	{
+	var shapeID = 0;
+	for (var i = 1; i < 4; i++)
+	{
+	if (document.getElementById("wzor"+i).style.border=="5px solid green")shapeID = i;
+	}
+	return shapeID;
+	}
+	</script>
+	
+		<script type="text/javascript">
+	function startGame() {
+	console.log("startgame wykonuje sie");
+	for (var i=1; i<26; i++)
+	{
+	document.getElementById(i).style.backgroundColor = "rgba(255, 255, 155, 0.8)";
+	document.getElementById(i).style.border="1px solid rgba(0, 0, 55, 0.8)";
+	}
+	
+	
+	if (whichShape()==1 || whichShape()==null)
+	{
+
+	document.getElementById("wzor2").style.border = "3px solid #ffcc00";
+	document.getElementById("wzor2").style.backgroundColor = "Cornsilk";
+	document.getElementById("wzor3").style.border = "3px solid #ffcc00";
+	document.getElementById("wzor3").style.backgroundColor = "Cornsilk";
+	
+	}
+	
+	else if (whichShape()==2)
+	{
+	
+	document.getElementById("wzor1").style.border = "3px solid #ffcc00";
+	document.getElementById("wzor1").style.backgroundColor = "Cornsilk";
+	document.getElementById("wzor3").style.border = "3px solid #ffcc00";
+	document.getElementById("wzor3").style.backgroundColor = "Cornsilk";
+
+	}
+	
+	else if (whichShape()==3)
+	{
+	
+	document.getElementById("wzor1").style.border = "3px solid #ffcc00";
+	document.getElementById("wzor1").style.backgroundColor = "Cornsilk";
+	document.getElementById("wzor2").style.border = "3px solid #ffcc00";
+	document.getElementById("wzor2").style.backgroundColor = "Cornsilk";
+	}
+	
+	
+	}
+	
+	</script>
+	
+	
+	<script type="text/javascript">
+	
+	
+	function chooseShape (shapeNumber)
+	//dziala
+	
+
+	{
+	console.log("choosegame wykonuje sie");
+
+			document.getElementById("wzor1").style.border = "3px solid #ffcc00";
+	document.getElementById("wzor1").style.backgroundColor = "Cornsilk";
+	document.getElementById("wzor2").style.border = "3px solid #ffcc00";
+	document.getElementById("wzor2").style.backgroundColor = "Cornsilk";
+	document.getElementById("wzor3").style.border = "3px solid #ffcc00";
+	document.getElementById("wzor3").style.backgroundColor = "Cornsilk";
+	
+	if (shapeNumber==1) 
+	{
+	document.getElementById("wzor1").style.border = "5px solid green";
+	document.getElementById("wzor1").style.backgroundColor = "rgba(0, 255, 0, 0.8)";
+	startGame();
+	}
+	if (shapeNumber==2) 
+	{
+	document.getElementById("wzor2").style.border = "5px solid green";
+	document.getElementById("wzor2").style.backgroundColor = "rgba(0, 255, 0, 0.8)";
+	startGame();
+	}
+	if (shapeNumber==3) 
+	{
+	document.getElementById("wzor3").style.border = "5px solid green";
+	document.getElementById("wzor3").style.backgroundColor = "rgba(0, 255, 0, 0.8)";
+	startGame();
+	}
+		losujPola(shapeNumber);
+	}
+	
+	</script>
+
+	
+	<script type="text/javascript">
+	
+	function shape1 (id)
+	{
+	
+	//nasz wzór w tablicy
+	var tab=[id-5,id-4,id-1,id,id+5,id+6];
+	
+	//jesli dojdziemy do prawej krawedzi, nasz wzór jest przycięty z prawej
+	if(id%5==0)tab=[id-5,id-1,id,id+5];
+	
+	//jesli dojdziemy do lewej krawedzi, nasz wzór jest przycięty z lewej
+	if((id-1)%5==0)tab=[id-5, id-4, id,id+5,id+6];
+	
+	//przejscie po calej tablicy, jesli jakieś pole wychodzi poza ekran, to go nie wyświetla
+	
+	for(var i=0;i<tab.length;i++){
+	
+	if(tab[i]>0&&tab[i]<26)
+	{
+	colorFields(tab[i]);
+	}
+	}
+	console.log("shape1 wykonuje sie: ", id);
+	isFinish();
+	}
+	
+	</script>
+	
+	<script type="text/javascript">
+	
+	function shape2 (id)
+	{
+	var tab=[id-5,id-1,id,id+1,id+4, id+6];
+	
+	//jesli dojdziemy do prawej krawedzi, nasz wzór jest przycięty z prawej
+	if(id%5==0)tab=[id-5,id-1,id,id+4];
+	
+	//jesli dojdziemy do lewej krawedzi, nasz wzór jest przycięty z lewej
+	if((id-1)%5==0)tab=[id-5,id,id+1,id+6];
+	
+	//przejscie po calej tablicy, jesli jakieś pole wychodzi poza ekran, to go nie wyświetla
+	
+	for(var i=0;i<tab.length;i++){
+	if(tab[i]>0&&tab[i]<26)
+	{
+	colorFields(tab[i]);
+	console.log("koloruje pole: ", tab[i]);
+	}
+	}
+	isFinish();
+	}
+	
+	</script>
+	
+	<script type="text/javascript">
+	
+	function shape3 (id)
+	{
+	var tab=[id-5,id-4, id-1,id,id+5];
+	
+	//jesli dojdziemy do prawej krawedzi, nasz wzór jest przycięty z prawej
+	if(id%5==0)tab=[id-5,id-1,id,id+5];
+	
+	//jesli dojdziemy do lewej krawedzi, nasz wzór jest przycięty z lewej
+	if((id-1)%5==0)tab=[id-5,id-4,id,id+5];
+	
+	//przejscie po calej tablicy, jesli jakieś pole wychodzi poza ekran, to go nie wyświetla
+	
+	for(var i=0;i<tab.length;i++){
+	if(tab[i]>0&&tab[i]<26)
+	{
+	colorFields(tab[i]);
+	console.log("koloruje pole: ", tab[i]);
+	}
+	
+	}
+	isFinish();
+	}
+	
+	</script>
+	
+		<script type="text/javascript">
+	
+	
+	function wstawWzor (id)
+	{
+	
+	
+	console.log("dodaje dwa elementy do tabeli: ", id, id)
+	hints.push(id, id);
+	hints.sort();
+	document.getElementById(id).style.border="1px solid rgba(0, 0, 55, 0.8)";
+	
+
+	
+	if(whichShape()==1)shape1(id);
+	if(whichShape()==2)shape2(id);
+	if(whichShape()==3)shape3(id);
+	}
+	</script>
+	
+</head>
+
+
+
+
+
+
+<body onload="zmienKolor(), chooseShape(1)">
+
+<header>
+
+<div class = "header" id="headeeer">
+<p id="headerUp"><span style="font-size: 70px; margin-left: 5px;"> LIGHTS OUT</span></p>
+<p><span style="font-size: 20px; margin-left: 10px; margin-top:0px"> ARTUR MENDELA, RMS, Informatyka, Sem. V</span></p>
+</div>
+
+<div class="grid-counters" style="font-weight: bold; font-family: courier new;">
+
+<div id="liczydlo1" style="width:94%; height: 30px; border: 3px solid orange; padding-top: 5px; text-align: center; font-size: 21px;">
+<span style="font-size: 15px">G: </span><span id="licznik1">0</span>/25
+</div>
+<div id="liczydlo2" style="width:97%; height: 30px; border: 3px solid orange;padding-top: 5px; text-align: center; font-size: 21px;">
+<span style="font-size: 15px"> R:</span> <span id="licznikR">0</span>/25
+</div>
+<div id="liczydlo3" style="width:94%; height: 30px; border: 3px solid orange;padding-top: 5px; text-align: center; font-size: 21px;">
+<span style="font-size: 15px">Y:</span> <span id="licznikP">0</span>/25
+</div>
+
+<div id="licznik2" style="width:165%; height: 25px; border: 3px solid orange; padding: 10px; text-align: center; font-size: 19px;">
+<span style="font-size: 15px">Zaczynamy</span>
+</div>
+
+<div style="height: 27px; width: 100%; margin-left: 126px;"><button class = "przycisk" id ="przyciskB" style="font-weight: bold;
+font-family: courier new;height: 51px;border: 3px solid orange; width: 100%; padding: 10px; text-align: center; font-size: 19px;" type="button" onclick="podpowiedzi()">Podpowiedź</button></div>
+
+</div>
+
+<br>
+</header>
+
+<div id="plansza" class="grid-container">
+  <div class="grid-item" id="1" onclick="wstawWzor(1)"></div>
+  <div class="grid-item" id="2" onclick="wstawWzor(2)"></div>
+  <div class="grid-item" id="3" onclick="wstawWzor(3)"></div>
+  <div class="grid-item" id="4" onclick="wstawWzor(4)"></div>
+  <div class="grid-item" id="5" onclick="wstawWzor(5)"></div>
+  <div class="grid-item" id="6" onclick="wstawWzor(6)"></div>
+  <div class="grid-item" id="7" onclick="wstawWzor(7)"></div>
+  <div class="grid-item" id="8" onclick="wstawWzor(8)"></div>
+  <div class="grid-item" id="9" onclick="wstawWzor(9)"></div>
+  <div class="grid-item" id="10" onclick="wstawWzor(10)"></div>
+  <div class="grid-item" id="11" onclick="wstawWzor(11)"></div>
+  <div class="grid-item" id="12" onclick="wstawWzor(12)"></div>
+  <div class="grid-item" id="13" onclick="wstawWzor(13)"></div>
+  <div class="grid-item" id="14" onclick="wstawWzor(14)"></div>
+  <div class="grid-item" id="15" onclick="wstawWzor(15)"></div>
+  <div class="grid-item" id="16" onclick="wstawWzor(16)"></div>
+  <div class="grid-item" id="17" onclick="wstawWzor(17)"></div>
+  <div class="grid-item" id="18" onclick="wstawWzor(18)"></div>
+  <div class="grid-item" id="19" onclick="wstawWzor(19)"></div>
+  <div class="grid-item" id="20" onclick="wstawWzor(20)"></div>
+  <div class="grid-item" id="21" onclick="wstawWzor(21)"></div>
+  <div class="grid-item" id="22" onclick="wstawWzor(22)"></div>
+  <div class="grid-item" id="23" onclick="wstawWzor(23)"></div>
+  <div class="grid-item" id="24" onclick="wstawWzor(24)"></div>
+  <div class="grid-item" id="25" onclick="wstawWzor(25)"></div>
+</div>
+
+<div id="wzoryContainer" class="wzoryContainer">
+	
+	<div id="wzor1" class="wzory1" onclick="chooseShape(1)">
+	
+<div class="white"></div>
+<div class="orange" ></div>
+<div class="orange"></div>
+<div class="orange" ></div>
+<div class="orange"></div>
+<div class="white"></div>
+<div class="white"></div>
+<div class="orange"></div>
+<div class="orange"></div>
+
+	</div>
+
+	<div id="wzor2" class="wzory2" onclick="chooseShape(2)">
+	
+<div class="white" ></div>
+<div class="orange" ></div>
+<div class="white"></div>
+<div class="orange" ></div>
+<div class="orange"></div>
+<div class="orange"></div>
+<div class="orange"></div>
+<div class="white"></div>
+<div class="orange"></div>
+
+	</div>
+	
+	<div id="wzor3" class="wzory3" onclick="chooseShape(3)">
+	
+<div class="white" ></div>
+<div class="orange" ></div>
+<div class="orange"></div>
+<div class="orange" ></div>
+<div class="orange"></div>
+<div class="white"></div>
+<div class="white"></div>
+<div class="orange"></div>
+<div class="white"></div>
+
+	</div>
+	
+</div>
+
+
+</body>
+</html>
